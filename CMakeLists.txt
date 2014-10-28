@@ -11,7 +11,6 @@ file(GLOB_RECURSE SRC_LIST ${PROJECT_SOURCE_DIR}/source/*.cpp ${PROJECT_SOURCE_D
 # Copy Resource file to build directory #
 file(COPY ${PROJECT_SOURCE_DIR}/resource/Task.xls DESTINATION ${MatModelOfEnv_BUILD_DIR}/resource)
 file(COPY ${PROJECT_SOURCE_DIR}/resource/Task.txt DESTINATION ${MatModelOfEnv_BUILD_DIR}/resource)
-file(COPY ${PROJECT_SOURCE_DIR}/resource/TaskY.txt DESTINATION ${MatModelOfEnv_BUILD_DIR}/resource)
 
 # Set Path to shared library #
 link_directories("${PROJECT_SOURCE_DIR}/lib/libxl/")

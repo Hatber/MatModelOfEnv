@@ -138,7 +138,44 @@ int main()
 
     //**** PART II ****\\
     // ---- Stationarity of the series ---- //
-    ff
+    fftw_complex *in, *out;
+    fftw_plan p_forward, p_backward;
+
+    in = ( fftw_complex* ) fftw_malloc(sizeof (fftw_complex ) * pointCount);
+    out = ( fftw_complex* ) fftw_malloc(sizeof (fftw_complex ) * pointCount);
+
+    for(size_t i = 0; i < pointCount; i++) {
+        in[i][0] = normalizedHeight[i];
+        in[i][1] = 0;
+    }
+
+    p_forward = fftw_plan_dft_1d(pointCount, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    fftw_execute(p_forward);
+
+    for(size_t i = 0; i < pointCount; i++) {
+        out[i][0] = pow(out[i][0], 2);
+        out[i][1] = pow(out[i][1], 2);
+    }
+
+    p_backward = fftw_plan_dft_1d (pointCount, out, in, FFTW_BACKWARD, FFTW_ESTIMATE );
+    fftw_execute(p_backward);
+
+    vector<double> ACF;
+    ACF.resize(pointCount);
+    for(size_t i = 0; i < pointCount; i++) {
+        ACF[i] = in[i][0]/in[0][0];
+    }
+
+    fftw_destroy_plan(p_forward);
+    fftw_destroy_plan(p_backward);
+    fftw_free(in);
+    fftw_free(out);
+
+    Gnuplot ACFPlot;
+    ACFPlot.set_title("ACF");
+    ACFPlot.plot_x(ACF);
+
+
     
 
     cin.get();
