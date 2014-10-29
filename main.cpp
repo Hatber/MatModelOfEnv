@@ -18,7 +18,9 @@ const int pointCount = 1024;
 const string taskFilePath = "../resource/Task.txt";
 
 const size_t rangesCount = 100;
-const size_t polynomialMaxDegree = 38; // GnuPlot constraint 38
+const size_t polynomialMaxDegree = 9; // GnuPlot constraint 38
+
+const size_t maxACFFindranges = 100;
 
 double calcAverageValue(const vector<double>& heights);
 double calcRootMeanSquareValue(const vector<double>& heights);
@@ -40,6 +42,13 @@ int main()
 
     vector<double>& years = loader->getYears();
     vector<double>& heights = loader->getHeights();
+
+    Gnuplot primaryFilePlot;
+    primaryFilePlot.set_title("Primary File");
+    primaryFilePlot.set_xlabel("Years");
+    primaryFilePlot.set_ylabel("Heights");
+    primaryFilePlot.set_style("lines");
+    primaryFilePlot.plot_xy(years, heights);
 
 
     // **** PART I **** \\
@@ -141,11 +150,11 @@ int main()
     fftw_complex *in, *out;
     fftw_plan p_forward, p_backward;
 
-    in = ( fftw_complex* ) fftw_malloc(sizeof (fftw_complex ) * pointCount);
+    in  = ( fftw_complex* ) fftw_malloc(sizeof (fftw_complex ) * pointCount);
     out = ( fftw_complex* ) fftw_malloc(sizeof (fftw_complex ) * pointCount);
 
     for(size_t i = 0; i < pointCount; i++) {
-        in[i][0] = normalizedHeight[i];
+        in[i][0] = heights[i];
         in[i][1] = 0;
     }
 
@@ -175,8 +184,14 @@ int main()
     ACFPlot.set_title("ACF");
     ACFPlot.plot_x(ACF);
 
+//    ACFPlot.set_terminal_std("png");
+//    ACFPlot.cmd("set output \"ACF.png\"");
 
-    
+//    ACFPlot.replot();
+
+    //ACFPlot.cmd("set term x11");
+
+
 
     cin.get();
 
