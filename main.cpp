@@ -20,7 +20,7 @@ const string taskFilePath = "../resource/Task.txt";
 const size_t rangesCount = 100;
 const size_t polynomialMaxDegree = 9; // GnuPlot constraint 38
 
-const size_t maxACFFindranges = 100;
+const double a = 0.95;
 
 double calcAverageValue(const vector<double>& heights);
 double calcRootMeanSquareValue(const vector<double>& heights);
@@ -30,6 +30,10 @@ void GaussSolve(vector< vector< double > >& a, vector< double >& b, vector< doub
 double leastSquaresMethod(const vector<double>& polynom, const vector<double>& x, const vector<double>& y);
 double calcPolynomValue(const vector<double>& polynom, double xValue);
 std::string makePolynom(const vector<double>& polynom);
+
+size_t factorial(size_t n) {
+  return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
+}
 
 int main()
 {
@@ -198,6 +202,90 @@ int main()
     ACFPlot.cmd("set output \"ACF.png\"");
 
     ACFPlot.plot_x(ACF);
+
+    //**** PART III ****\\
+    // ---- Calculate the cumulative frequency ---- //
+    vector<double> cumulativeFrequency;
+    for(size_t i = 0; i < rangesCount; i++) {
+        cumulativeFrequency.push_back(rangeEntering[rangesCount-i-1]);
+    }
+
+    Gnuplot cumulativeFrequencyPlot;
+    cumulativeFrequencyPlot.set_title("Cumulative Frequency");
+
+    cumulativeFrequencyPlot.set_xrange(0, 1.);
+    cumulativeFrequencyPlot.set_style("lines");
+    cumulativeFrequencyPlot.cmd("set terminal png size 1024,768");
+    cumulativeFrequencyPlot.cmd("set output \"Cumulative Frequency.png\"");
+    cumulativeFrequencyPlot.plot_xy(ranges, cumulativeFrequency);
+
+    // ---- Stationarity of the cumulative frequency ----
+    in  = ( fftw_complex* ) fftw_malloc(sizeof (fftw_complex ) * rangesCount);
+    out = ( fftw_complex* ) fftw_malloc(sizeof (fftw_complex ) * rangesCount);
+
+    for(size_t i = 0; i < rangesCount; i++) {
+        in[i][0] = heights[i];
+        in[i][1] = 0;
+    }
+
+    p_forward = fftw_plan_dft_1d(rangesCount, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+    fftw_execute(p_forward);
+
+    for(size_t i = 0; i < rangesCount; i++) {
+        out[i][0] = pow(out[i][0], 2);
+        out[i][1] = pow(out[i][1], 2);
+    }
+
+    p_backward = fftw_plan_dft_1d (rangesCount, out, in, FFTW_BACKWARD, FFTW_ESTIMATE );
+    fftw_execute(p_backward);
+
+    vector<double> ACF2;
+    ACF2.resize(rangesCount);
+    for(size_t i = 0; i < rangesCount; i++) {
+        ACF2[i] = in[i][0]/in[0][0];
+    }
+
+    fftw_destroy_plan(p_forward);
+    fftw_destroy_plan(p_backward);
+    fftw_free(in);
+    fftw_free(out);
+
+    Gnuplot ACF2Plot;
+    ACF2Plot.set_title("ACF2");
+
+    ACF2Plot.set_xrange(0, rangesCount);
+    ACF2Plot.set_style("lines");
+    ACF2Plot.cmd("set terminal png size 1024,768");
+    ACF2Plot.cmd("set output \"ACF2.png\"");
+
+    ACF2Plot.plot_x(ACF2);
+
+    //**** PART IV ****\\
+    // ---- Long term prognosis excess ---- //
+    Gnuplot excessPlot;
+    excessPlot.set_title("Excess");
+
+
+    double v = cumulativeFrequency[a*rangesCount];
+    const double T = 220;
+    double e = 2.7;
+    for(size_t m = 1; m < 10; m++) {
+        string vStr = boost::lexical_cast<string>(v);
+        string mStr = boost::lexical_cast<string>(m);
+        string eStr = boost::lexical_cast<string>(e);
+        string equation = "((" + vStr + "*x)" +
+                "**" + mStr + ")/"  + boost::lexical_cast<string>(factorial(m)) +
+                "*" + eStr + "**(-" + vStr + "*x)";
+
+        cout << equation << endl;
+
+        excessPlot.set_style("lines");
+        excessPlot.set_xrange(0, T);
+        excessPlot.cmd("set terminal png size 1024,768");
+        excessPlot.cmd("set output \"Excess.png\"");
+        excessPlot.plot_equation(equation);
+    }
+
 
     return 0;
 }
