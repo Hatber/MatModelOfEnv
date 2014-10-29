@@ -48,6 +48,8 @@ int main()
     primaryFilePlot.set_xlabel("Years");
     primaryFilePlot.set_ylabel("Heights");
     primaryFilePlot.set_style("lines");
+    primaryFilePlot.cmd("set terminal png size 1024,768");
+    primaryFilePlot.cmd("set output \"Primary File.png\"");
     primaryFilePlot.plot_xy(years, heights);
 
 
@@ -91,6 +93,8 @@ int main()
     distributionFunctionPlot.set_title("Distribution function");
     distributionFunctionPlot.set_xlabel("Heights");
     distributionFunctionPlot.set_style("lines");
+    distributionFunctionPlot.cmd("set terminal png size 1024,768");
+    distributionFunctionPlot.cmd("set output \"Distribution function.png\"");
     distributionFunctionPlot.plot_xy(ranges, rangeEntering);
 
     // ---- Construction of the density distribution ---- //
@@ -111,6 +115,8 @@ int main()
     densityDistributionPlot.set_style("impulses");
     densityDistributionPlot.set_ylabel("f(x)");
     densityDistributionPlot.set_xlabel("Heights");
+    densityDistributionPlot.cmd("set terminal png size 1024,768");
+    densityDistributionPlot.cmd("set output \"Density Distribution.png\"");
     densityDistributionPlot.plot_xy(ranges, densityDistribution);
 
     // ---- Approximation of a theoretical dependences ---- //
@@ -139,8 +145,12 @@ int main()
     aproximateDensityDistributionPlot.set_xlabel("Heights");
     aproximateDensityDistributionPlot.set_xrange(0., 0.98);
 
-    aproximateDensityDistributionPlot.reset_plot();
+    aproximateDensityDistributionPlot.cmd("set terminal png size 1024,768");
+    aproximateDensityDistributionPlot.cmd("set output \"Aproximate Density Distribution.png\"");
     aproximateDensityDistributionPlot.plot_xy(ranges, densityDistribution);
+
+    aproximateDensityDistributionPlot.cmd("set terminal png size 1024,768");
+    aproximateDensityDistributionPlot.cmd("set output \"Aproximate Density Distribution.png\"");
     aproximateDensityDistributionPlot.set_pointsize(10.0);
     aproximateDensityDistributionPlot.plot_equation(makePolynom(polynom));
 
@@ -182,18 +192,12 @@ int main()
 
     Gnuplot ACFPlot;
     ACFPlot.set_title("ACF");
+
+    ACFPlot.set_xrange(0, pointCount);
+    ACFPlot.cmd("set terminal png size 1024,768");
+    ACFPlot.cmd("set output \"ACF.png\"");
+
     ACFPlot.plot_x(ACF);
-
-//    ACFPlot.set_terminal_std("png");
-//    ACFPlot.cmd("set output \"ACF.png\"");
-
-//    ACFPlot.replot();
-
-    //ACFPlot.cmd("set term x11");
-
-
-
-    cin.get();
 
     return 0;
 }
