@@ -14,11 +14,16 @@
 
 using namespace std;
 
+const double alpha = 2;
+const double betta = 2*alpha;
+
 const int pointCount = 1024;
 const string taskFilePath = "../resource/Task.txt";
 
 const size_t rangesCount = 100;
-const size_t polynomialMaxDegree = 9; // GnuPlot constraint 38
+const size_t polynomialMaxDegree = 38; // GnuPlot constraint 38
+
+const string pngPrefix = "Result/";
 
 const double a = 0.95;
 
@@ -53,7 +58,7 @@ int main()
     primaryFilePlot.set_ylabel("Heights");
     primaryFilePlot.set_style("lines");
     primaryFilePlot.cmd("set terminal png size 1024,768");
-    primaryFilePlot.cmd("set output \"Primary File.png\"");
+    primaryFilePlot.cmd("set output \"" + pngPrefix + "Primary File.png\"");
     primaryFilePlot.plot_xy(years, heights);
 
 
@@ -98,7 +103,7 @@ int main()
     distributionFunctionPlot.set_xlabel("Heights");
     distributionFunctionPlot.set_style("lines");
     distributionFunctionPlot.cmd("set terminal png size 1024,768");
-    distributionFunctionPlot.cmd("set output \"Distribution function.png\"");
+    distributionFunctionPlot.cmd("set output \"" + pngPrefix + "Distribution function.png\"");
     distributionFunctionPlot.plot_xy(ranges, rangeEntering);
 
     // ---- Construction of the density distribution ---- //
@@ -120,7 +125,7 @@ int main()
     densityDistributionPlot.set_ylabel("f(x)");
     densityDistributionPlot.set_xlabel("Heights");
     densityDistributionPlot.cmd("set terminal png size 1024,768");
-    densityDistributionPlot.cmd("set output \"Density Distribution.png\"");
+    densityDistributionPlot.cmd("set output \"" + pngPrefix + "Density Distribution.png\"");
     densityDistributionPlot.plot_xy(ranges, densityDistribution);
 
     // ---- Approximation of a theoretical dependences ---- //
@@ -150,11 +155,11 @@ int main()
     aproximateDensityDistributionPlot.set_xrange(0., 0.98);
 
     aproximateDensityDistributionPlot.cmd("set terminal png size 1024,768");
-    aproximateDensityDistributionPlot.cmd("set output \"Aproximate Density Distribution.png\"");
+    aproximateDensityDistributionPlot.cmd("set output \"" + pngPrefix + "Aproximate Density Distribution.png\"");
     aproximateDensityDistributionPlot.plot_xy(ranges, densityDistribution);
 
     aproximateDensityDistributionPlot.cmd("set terminal png size 1024,768");
-    aproximateDensityDistributionPlot.cmd("set output \"Aproximate Density Distribution.png\"");
+    aproximateDensityDistributionPlot.cmd("set output \"" + pngPrefix + "Aproximate Density Distribution.png\"");
     aproximateDensityDistributionPlot.set_pointsize(10.0);
     aproximateDensityDistributionPlot.plot_equation(makePolynom(polynom));
 
@@ -199,7 +204,7 @@ int main()
 
     ACFPlot.set_xrange(0, pointCount);
     ACFPlot.cmd("set terminal png size 1024,768");
-    ACFPlot.cmd("set output \"ACF.png\"");
+    ACFPlot.cmd("set output \"" + pngPrefix + "ACF.png\"");
 
     ACFPlot.plot_x(ACF);
 
@@ -216,7 +221,7 @@ int main()
     cumulativeFrequencyPlot.set_xrange(0, 1.);
     cumulativeFrequencyPlot.set_style("lines");
     cumulativeFrequencyPlot.cmd("set terminal png size 1024,768");
-    cumulativeFrequencyPlot.cmd("set output \"Cumulative Frequency.png\"");
+    cumulativeFrequencyPlot.cmd("set output \"" + pngPrefix + "Cumulative Frequency.png\"");
     cumulativeFrequencyPlot.plot_xy(ranges, cumulativeFrequency);
 
     // ---- Stationarity of the cumulative frequency ----
@@ -256,7 +261,7 @@ int main()
     ACF2Plot.set_xrange(0, rangesCount);
     ACF2Plot.set_style("lines");
     ACF2Plot.cmd("set terminal png size 1024,768");
-    ACF2Plot.cmd("set output \"ACF2.png\"");
+    ACF2Plot.cmd("set output \"" + pngPrefix + "ACF2.png\"");
 
     ACF2Plot.plot_x(ACF2);
 
@@ -267,9 +272,9 @@ int main()
 
 
     double v = cumulativeFrequency[a*rangesCount];
-    const double T = 220;
+    const double T = 400;
     double e = 2.7;
-    for(size_t m = 1; m < 10; m++) {
+    for(size_t m = 1; m < 13; m++) {
         string vStr = boost::lexical_cast<string>(v);
         string mStr = boost::lexical_cast<string>(m);
         string eStr = boost::lexical_cast<string>(e);
@@ -277,12 +282,10 @@ int main()
                 "**" + mStr + ")/"  + boost::lexical_cast<string>(factorial(m)) +
                 "*" + eStr + "**(-" + vStr + "*x)";
 
-        cout << equation << endl;
-
         excessPlot.set_style("lines");
         excessPlot.set_xrange(0, T);
         excessPlot.cmd("set terminal png size 1024,768");
-        excessPlot.cmd("set output \"Excess.png\"");
+        excessPlot.cmd("set output \"" + pngPrefix + "Excess.png\"");
         excessPlot.plot_equation(equation);
     }
 
