@@ -18,12 +18,13 @@ const double alpha = 2;
 const double betta = 2*alpha;
 
 const int pointCount = 1024;
-const string taskFilePath = "../resource/Task.txt";
+const string taskFilePath = "../resource/Pogodin.txt";
 
 const size_t rangesCount = 100;
-const size_t polynomialMaxDegree = 38; // GnuPlot constraint 38
+const size_t polynomialMaxDegree = 9; // GnuPlot constraint 38
 
 const string pngPrefix = "Result/";
+const string imageFormat = "png";
 
 const double a = 0.95;
 
@@ -57,8 +58,8 @@ int main()
     primaryFilePlot.set_xlabel("Years");
     primaryFilePlot.set_ylabel("Heights");
     primaryFilePlot.set_style("lines");
-    primaryFilePlot.cmd("set terminal png size 1024,768");
-    primaryFilePlot.cmd("set output \"" + pngPrefix + "Primary File.png\"");
+    primaryFilePlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    primaryFilePlot.cmd("set output \"" + pngPrefix + "Primary File." + imageFormat + "\"");
     primaryFilePlot.plot_xy(years, heights);
 
 
@@ -102,8 +103,8 @@ int main()
     distributionFunctionPlot.set_title("Distribution function");
     distributionFunctionPlot.set_xlabel("Heights");
     distributionFunctionPlot.set_style("lines");
-    distributionFunctionPlot.cmd("set terminal png size 1024,768");
-    distributionFunctionPlot.cmd("set output \"" + pngPrefix + "Distribution function.png\"");
+    distributionFunctionPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    distributionFunctionPlot.cmd("set output \"" + pngPrefix + "Distribution function." + imageFormat + "\"");
     distributionFunctionPlot.plot_xy(ranges, rangeEntering);
 
     // ---- Construction of the density distribution ---- //
@@ -124,8 +125,8 @@ int main()
     densityDistributionPlot.set_style("impulses");
     densityDistributionPlot.set_ylabel("f(x)");
     densityDistributionPlot.set_xlabel("Heights");
-    densityDistributionPlot.cmd("set terminal png size 1024,768");
-    densityDistributionPlot.cmd("set output \"" + pngPrefix + "Density Distribution.png\"");
+    densityDistributionPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    densityDistributionPlot.cmd("set output \"" + pngPrefix + "Density Distribution." + imageFormat + "\"");
     densityDistributionPlot.plot_xy(ranges, densityDistribution);
 
     // ---- Approximation of a theoretical dependences ---- //
@@ -154,12 +155,12 @@ int main()
     aproximateDensityDistributionPlot.set_xlabel("Heights");
     aproximateDensityDistributionPlot.set_xrange(0., 0.98);
 
-    aproximateDensityDistributionPlot.cmd("set terminal png size 1024,768");
-    aproximateDensityDistributionPlot.cmd("set output \"" + pngPrefix + "Aproximate Density Distribution.png\"");
+    aproximateDensityDistributionPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    aproximateDensityDistributionPlot.cmd("set output \"" + pngPrefix + "Aproximate Density Distribution." + imageFormat + "\"");
     aproximateDensityDistributionPlot.plot_xy(ranges, densityDistribution);
 
-    aproximateDensityDistributionPlot.cmd("set terminal png size 1024,768");
-    aproximateDensityDistributionPlot.cmd("set output \"" + pngPrefix + "Aproximate Density Distribution.png\"");
+    aproximateDensityDistributionPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    aproximateDensityDistributionPlot.cmd("set output \"" + pngPrefix + "Aproximate Density Distribution." + imageFormat + "\"");
     aproximateDensityDistributionPlot.set_pointsize(10.0);
     aproximateDensityDistributionPlot.plot_equation(makePolynom(polynom));
 
@@ -203,8 +204,8 @@ int main()
     ACFPlot.set_title("ACF");
 
     ACFPlot.set_xrange(0, pointCount);
-    ACFPlot.cmd("set terminal png size 1024,768");
-    ACFPlot.cmd("set output \"" + pngPrefix + "ACF.png\"");
+    ACFPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    ACFPlot.cmd("set output \"" + pngPrefix + "ACF." + imageFormat + "\"");
 
     ACFPlot.plot_x(ACF);
 
@@ -220,8 +221,8 @@ int main()
 
     cumulativeFrequencyPlot.set_xrange(0, 1.);
     cumulativeFrequencyPlot.set_style("lines");
-    cumulativeFrequencyPlot.cmd("set terminal png size 1024,768");
-    cumulativeFrequencyPlot.cmd("set output \"" + pngPrefix + "Cumulative Frequency.png\"");
+    cumulativeFrequencyPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    cumulativeFrequencyPlot.cmd("set output \"" + pngPrefix + "Cumulative Frequency." + imageFormat + "\"");
     cumulativeFrequencyPlot.plot_xy(ranges, cumulativeFrequency);
 
     // ---- Stationarity of the cumulative frequency ----
@@ -260,8 +261,8 @@ int main()
 
     ACF2Plot.set_xrange(0, rangesCount);
     ACF2Plot.set_style("lines");
-    ACF2Plot.cmd("set terminal png size 1024,768");
-    ACF2Plot.cmd("set output \"" + pngPrefix + "ACF2.png\"");
+    ACF2Plot.cmd("set terminal " + imageFormat + " size 1024,768");
+    ACF2Plot.cmd("set output \"" + pngPrefix + "ACF2." + imageFormat + "\"");
 
     ACF2Plot.plot_x(ACF2);
 
@@ -284,8 +285,8 @@ int main()
 
         excessPlot.set_style("lines");
         excessPlot.set_xrange(0, T);
-        excessPlot.cmd("set terminal png size 1024,768");
-        excessPlot.cmd("set output \"" + pngPrefix + "Excess.png\"");
+        excessPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+        excessPlot.cmd("set output \"" + pngPrefix + "Excess." + imageFormat + "\"");
         excessPlot.plot_equation(equation);
     }
 
