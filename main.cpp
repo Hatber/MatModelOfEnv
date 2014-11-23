@@ -18,10 +18,10 @@ const double alpha = 2;
 const double betta = 2*alpha;
 
 const int pointCount = 1024;
-const string taskFilePath = "../resource/Pogodin.txt";
+const string taskFilePath = "../resource/TaskY.txt";
 
 const size_t rangesCount = 100;
-const size_t polynomialMaxDegree = 9; // GnuPlot constraint 38
+const size_t polynomialMaxDegree = 38; // GnuPlot constraint 38
 
 const string pngPrefix = "Result/";
 const string imageFormat = "png";
@@ -289,6 +289,54 @@ int main()
         excessPlot.cmd("set output \"" + pngPrefix + "Excess." + imageFormat + "\"");
         excessPlot.plot_equation(equation);
     }
+
+    //**** PART V ****\\
+    // ---- Short-term forecast of the water level ---- //
+    //У меня получилось стационарны 146 точек
+    const size_t stationaryPointsCount = 146;
+    vector< vector< double > > x(stationaryPointsCount, vector< double >(stationaryPointsCount, 0));
+    vector< double > xn(stationaryPointsCount*2, 0);
+
+    for(size_t i = 0; i< stationaryPointsCount; i++) {
+        for(size_t j = 0; j< stationaryPointsCount; j++) {
+            x[i][j] = normalizedHeight[j+i];
+        }
+        xn[i] = normalizedHeight[stationaryPointsCount + i - 1];
+    }
+
+    vector< double > result(stationaryPointsCount, 0);
+    GaussSolve(x, xn, result, stationaryPointsCount);
+
+    for(size_t i = 0; i < stationaryPointsCount; i++) {
+        for(size_t j = 0; j< stationaryPointsCount; j++) {
+            xn[stationaryPointsCount + i] += result[j] * normalizedHeight[i + j + stationaryPointsCount];
+        }
+    }
+
+
+    vector< double > forecast(stationaryPointsCount);
+    vector< double > realData(stationaryPointsCount);
+
+    std::copy(xn.begin() + stationaryPointsCount, xn.end(), forecast.begin());
+    std::copy(
+                normalizedHeight.begin() + stationaryPointsCount*2,
+                normalizedHeight.begin() + stationaryPointsCount*3,
+                realData.begin()
+             );
+
+    Gnuplot forecastPlot;
+    forecastPlot.set_title("Forecast");
+
+    forecastPlot.set_style("lines");
+    forecastPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    forecastPlot.cmd("set output \"" + pngPrefix + "Forecast." + imageFormat + "\"");
+    forecastPlot.plot_x(forecast);
+
+    forecastPlot.cmd("set terminal " + imageFormat + " size 1024,768");
+    forecastPlot.cmd("set output \"" + pngPrefix + "Forecast." + imageFormat + "\"");
+    forecastPlot.plot_x(realData);
+
+
 
 
     return 0;
